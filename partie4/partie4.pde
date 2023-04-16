@@ -35,12 +35,12 @@ PShape ciel[] = new PShape[NIVEAU];
 
 // Texture de la pyramide
 PImage texture0;
+PImage texture;
 
 // Ciel Bleu
 PImage cielBleu;
-
-  
-
+PImage gold;
+PShape ground;
 
 // ____________________________________
 
@@ -49,7 +49,30 @@ void setup() {
   //frameRate(20);
   randomSeed(2);
   texture0 = loadImage("stones.jpg");
+  texture = loadImage("sable.jpg");
+  gold = loadImage("gold.jpg");
   size(1000, 1000, P3D);
+  // __________________
+  ground = createShape();
+  ground.noStroke();
+  ground.setTexture(texture);
+  ground.texture(texture);
+  textureWrap(REPEAT);
+  ground.beginShape(QUADS);
+  ground.normal(0, 1, 0);
+  ground.vertex(-1000, 0, -1000, 1, 0);
+  ground.vertex(1000, 0, -1000, 0, 1);
+  ground.vertex(1000, 0, 1000, 1000, 1000);
+  ground.vertex(-1000, 0, 1000, 0, 1000);
+  ground.endShape();
+  
+  // _____________________________
+  
+  
+  
+  
+  
+  
   // ______________________
   cielBleu = loadImage("cielbleu.jpg");
   cielBleu.resize(1000, 1000);
@@ -156,6 +179,7 @@ void setup() {
           for (int k=0; k<MUR; k++)
             for (int l=-MUR; l<MUR; l++) {
               // on crée les vertices
+              laby0[n].tint(255,255,0);
               laby0[n].vertex(i*wallW-wallW/2+(k+0)*wallW/MUR, j*wallH-wallH/2, (l+0)*50/MUR+n*100, k/(float)MUR*texture0.width, (0.5+l/2.0/MUR)*texture0.height);
               laby0[n].vertex(i*wallW-wallW/2+(k+1)*wallW/MUR, j*wallH-wallH/2, (l+0)*50/MUR+n*100, (k+1)/(float)MUR*texture0.width, (0.5+l/2.0/MUR)*texture0.height);
               laby0[n].vertex(i*wallW-wallW/2+(k+1)*wallW/MUR, j*wallH-wallH/2, (l+1)*50/MUR+n*100, (k+1)/(float)MUR*texture0.width, (0.5+(l+1)/2.0/MUR)*texture0.height);
@@ -164,6 +188,7 @@ void setup() {
         }
         
         // 1
+        laby0[n].tint(255,255,0);
         if (j==LAB_SIZE-1 || labyrinthe[n][j+1][i]==' ') {
           laby0[n].normal(0, 1, 0);
           for (int k=0; k<MUR; k++)
@@ -174,6 +199,7 @@ void setup() {
               laby0[n].vertex(i*wallW-wallW/2+(k+0)*wallW/MUR, j*wallH+wallH/2, (l+0)*50/MUR+n*100, (k+0)/(float)MUR*texture0.width, (0.5+(l+0)/2.0/MUR)*texture0.height);
             }
         }
+        laby0[n].tint(255,255,0);
         // 2
         if (i==0 || labyrinthe[n][j][i-1]==' ') {
           laby0[n].normal(-1, 0, 0);
@@ -185,6 +211,7 @@ void setup() {
               laby0[n].vertex(i*wallW-wallW/2, j*wallH-wallH/2+(k+0)*wallW/MUR, (l+0)*50/MUR+n*100, (k+0)/(float)MUR*texture0.width, (0.5+(l+0)/2.0/MUR)*texture0.height);
             }
         }
+        laby0[n].tint(255,255,0);
         // 3
         if (i==LAB_SIZE-1 || labyrinthe[n][j][i+1]==' ') {
           laby0[n].normal(1, 0, 0);
@@ -233,7 +260,7 @@ void setup() {
  
 }
 
-void cone(int size) {
+/*void cone(int size) {
   //beginShape(TRIANGLE);
   beginShape(TRIANGLE_FAN);
   vertex(0, 0, 0);
@@ -245,7 +272,7 @@ void cone(int size) {
   endShape();
   
   //terrainSable();
-}
+}*/
 // ______________________________________________________________________
 
 
@@ -306,18 +333,22 @@ void draw() {
     //camera((posX-dirX*anim/20.0)*wallW, (posY-dirY*anim/20.0)*wallH, -15+6*sin(anim*PI/20.0), 
     //  (posX+dirX-dirX*anim/20.0)*wallW, (posY+dirY-dirY*anim/20.0)*wallH, -15+10*sin(anim*PI/20.0), 0, 0, -1);
 
-    lights();
-    lightFalloff(0.0, 0.01, 0.0001);
+    //lights();
+    //lightFalloff(0.0, 0.01, 0.0001);
     pointLight(255, 255, 255, posX*labW, posY*labH, 15);
+    
+    ambientLight(102, 102, 102);
   } else {
     //lightFalloff(0.0, 0.05, 0.0001);
     //camera(70.0, 35.0, 420.0, 50.0, 50.0, 0.0, 0.0, 1.0, 0.0);
     //translate(-width/8, 100/2, 100);
-    //translate(0, 0, -1000);
+    translate(0, 0, -1000);
     //translate(-1500, -500, -180);
     
     //terrainSable();
     //rotateX(PI/3.5);
+    //rotateX(2*PI);
+    //rotateZ(PI/2);
     //rotateX(PI/6);
     lights();
     pointLight(255, 255, 255, posX*labW, posY*labH, 15);
@@ -345,7 +376,7 @@ void draw() {
               translate(0, -labH/2, 40);
               if(i == posX || j == posY) {
                 fill(i*25, j*25, 255-i*10+j*10);
-                sphere(5);
+                //sphere(5);
                 //spotLight(i*25, j*25, 255-i*10+j*10, 0, -15, 15, 0, 0, -1, PI/4, 1);
               }
               popMatrix();
@@ -356,7 +387,7 @@ void draw() {
               translate(0, labH/2, 40);
               if (i==posX || j==posY) {
                 fill(i*25, j*25, 255-i*10+j*10);
-                sphere(5);              
+                //sphere(5);              
                // spotLight(i*25, j*25, 255-i*10+j*10, 0, -15, 15, 0, 0, -1, PI/4, 1);
               }
               popMatrix();
@@ -367,7 +398,7 @@ void draw() {
               translate(-labW/2, 0, 40);
               if (i==posX || j==posY) {
                 fill(i*25, j*25, 255-i*10+j*10);
-                sphere(5);              
+                //sphere(5);              
                 //spotLight(i*25, j*25, 255-i*10+j*10, 0, -15, 15, 0, 0, -1, PI/4, 1);
              }
               popMatrix();
@@ -378,7 +409,7 @@ void draw() {
               translate(0, labH/2, 40);
               if (i==posX || j==posY) {
                 fill(i*25, j*25, 255-i*10+j*10);
-                sphere(5);              
+                //sphere(5);              
                 //spotLight(i*25, j*25, 255-i*10+j*10, 0, -15, 15, 0, 0, -1, PI/4, 1);
               }
               popMatrix();
@@ -409,7 +440,18 @@ void draw() {
     
   }
   }
+    pushMatrix();
+    //translate(472,472,100);
+    translate(labW+40, labH+40, 550);
+    trianglePyr(100);
+    popMatrix();
   
+  pushMatrix();
+  translate(width/2, height/2, 0);
+  translate(0, 0, -100);
+  rotateX(PI/2);
+  shape(ground);
+  popMatrix();
   
   //translate(0, 0, -60);
   //cone(100);
@@ -423,25 +465,25 @@ void trianglePyr(int t){
   beginShape(TRIANGLES);
   noStroke();
   //fill(255, 150); 
-  //texture(gold);
+  texture(gold);
   vertex(-t, -t, -t, 1, 0);
   vertex( t, -t, -t, 1, 1);
   vertex( 0, 0, t, 0, 1);
 
   //fill(150, 150);
-  //texture(gold);
+  texture(gold);
   vertex( t, -t, -t, 1, 0);
   vertex( t, t, -t, 1, 1);
   vertex( 0, 0, t, 0, 1);
 
   //fill(255, 150);
-  //texture(gold);
+  texture(gold);
   vertex( t, t, -t, 1, 0);
   vertex(-t, t, -t, 1, 1);
   vertex( 0, 0, t, 0, 1);
 
   //fill(150, 150);
-  //texture(gold);
+  texture(gold);
   vertex(-t, t, -t, 1, 0);
   vertex(-t, -t, -t, 1, 1);
   vertex( 0, 0, t, 0, 1);
